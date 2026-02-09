@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Sequence Rule Builder – Mr. McLean Math</title>
+  <style>
+    :root{
+      --bg:#0f1220;
+      --card:#171a2c;
+      --card2:#1f2440;
+      --text:#f2f4ff;
+      --muted:#b9c0ff;
+      --accent:#7c5cff;
+      --accent2:#27d3ff;
+      --good:#2ecc71;
+      --bad:#e74c3c;
+      --warn:#f1c40f;
+      --border:rgba(255,255,255,0.14);
+      --shadow:0 10px 26px rgba(0,0,0,0.45);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    }
+    body.hc{
+      --bg:#000;
+      --card:#000;
+      --card2:#000;
+      --text:#fff;
+      --muted:#fff;
+      --accent:#fff;
+      --accent2:#fff;
+      --border:#fff;
+      --shadow:none;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(124,92,255,0.35), transparent 60%),
+                  radial-gradient(900px 600px at 80% 20%, rgba(39,211,255,0.25), transparent 55%),
+                  radial-gradient(900px 600px at 40% 95%, rgba(46,204,113,0.15), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    header{
+      padding:18px 16px 8px;
+      max-width:1100px;
+      width:100%;
+      margin:0 auto;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .titleWrap{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:0.3px;
+      line-height:1.1;
+      text-shadow:0 4px 14px rgba(0,0,0,0.35);
+    }
+    .subtitle{
+      color:var(--muted);
+      font-weight:600;
+      font-size:13px;
+      letter-spacing:0.35px;
+    }
+    .badgeRow{
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .chip{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.06);
+      padding:8px 10px;
+      border-radius:999px;
+      display:flex; align-items:center; gap:8px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      font-size:12px;
+      font-weight:700;
+    }
+    .chip label{font-weight:700;color:var(--muted)}
+    .chip select,.chip input[type="checkbox"]{
+      accent-color:var(--accent2);
+    }
+    .chip select{
+      background:transparent;
+      color:var(--text);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:5px 10px;
+      font-weight:800;
+      outline:none;
+    }
+
+    /* ✅ Fix: dropdown option text visibility */
+    select option{
+      background: var(--card);
+      color: var(--text);
+    }
+    body.hc select option{
+      background:#000;
+      color:#fff;
+    }
+
+    .chip button{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .chip button:hover{transform:translateY(-1px)}
+    main{
+      max-width:1100px;
+      width:100%;
+      margin:0 auto;
+      padding:10px 16px 18px;
+      display:grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 920px){
+      main{grid-template-columns:1fr}
+      header{flex-direction:column;align-items:flex-start}
+      .badgeRow{justify-content:flex-start}
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardHeader{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .cardHeader h2{
+      margin:0;
+      font-size:16px;
+      letter-spacing:0.3px;
+    }
+    .pill{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      border:1px dashed var(--border);
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .cardBody{padding:14px}
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 700px){
+      .twoCol{grid-template-columns:1fr}
+    }
+
+    .sequenceBox{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,0.18);
+    }
+    .seqTitle{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .seqTitle .hint{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    table.seqTable{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:12px;
+      border:1px solid var(--border);
+    }
+    table.seqTable th, table.seqTable td{
+      padding:12px 10px;
+      text-align:center;
+      font-weight:900;
+      font-family:var(--mono);
+    }
+    table.seqTable th{
+      background:rgba(124,92,255,0.14);
+      color:var(--text);
+      border-bottom:1px solid var(--border);
+    }
+    table.seqTable td{
+      background:rgba(255,255,255,0.04);
+      border-right:1px solid var(--border);
+    }
+    table.seqTable td:last-child{border-right:none}
+    table.seqTable tr:last-child td{border-bottom:none}
+
+    .prompt{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,0.18);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .ruleBanner{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,0.05);
+      display:none;
+    }
+    .ruleBanner .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:6px;
+    }
+    .ruleBanner .label{
+      font-weight:1000;
+      letter-spacing:0.2px;
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+    }
+    .ruleBanner .expr{
+      font-family:var(--mono);
+      font-weight:1100;
+      font-size:16px;
+      letter-spacing:0.2px;
+      line-height:1.25;
+      word-break:break-word;
+    }
+    .ruleBanner .note{
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+      line-height:1.25;
+    }
+
+    .promptText{
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:0.2px;
+      line-height:1.25;
+    }
+    .promptText small{
+      display:block;
+      margin-top:6px;
+      color:var(--muted);
+     ullen;
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:0.3px;
+    }
+    .inputRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    .inputRow input{
+      flex: 1 1 240px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+      outline:none;
+      font-size:16px;
+      font-weight:900;
+      font-family:var(--mono);
+    }
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .btn{
+      border:none;
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:1000;
+      cursor:pointer;
+      color:var(--text);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 18px rgba(0,0,0,0.28);
+      letter-spacing:0.3px;
+      user-select:none;
+    }
+    .btn:disabled{
+      opacity:0.45;
+      cursor:not-allowed;
+      filter:grayscale(0.4);
+    }
+    .btn.secondary{
+      background:rgba(255,255,255,0.08);
+      border:1px solid var(--border);
+      box-shadow:none;
+    }
+    .btn.danger{
+      background:rgba(231,76,60,0.18);
+      border:1px solid rgba(231,76,60,0.55);
+      box-shadow:none;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0px)}
+
+    .feedbackBar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,0.18);
+    }
+    .status{
+      font-weight:1000;
+      letter-spacing:0.25px;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-height:20px;
+    }
+    .status .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.06);
+      color:var(--muted);
+    }
+    .status.good{color:var(--good)}
+    .status.bad{color:var(--bad)}
+    .status.neutral{color:var(--text)}
+    .kbd{
+      font-family:var(--mono);
+      font-weight:1000;
+      border:1px solid var(--border);
+      padding:3px 7px;
+      border-radius:8px;
+      background:rgba(255,255,255,0.06);
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .sideCard .cardBody{padding:12px}
+    .statsGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .stat{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 10px;
+      background:rgba(0,0,0,0.18);
+    }
+    .stat .label{
+      color:var(--muted);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:0.35px;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .stat .value{
+      font-size:18px;
+      font-weight:1100;
+      font-family:var(--mono);
+    }
+    .smallNote{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      line-height:1.25;
+    }
+
+    details{
+      margin-top:10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(0,0,0,0.18);
+      overflow:hidden;
+    }
+    summary{
+      cursor:pointer;
+      padding:10px 12px;
+      font-weight:1000;
+      letter-spacing:0.2px;
+      list-style:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    .incorrectList{
+      padding:0 12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .incItem{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,0.05);
+      padding:10px 10px;
+      font-size:12px;
+      line-height:1.25;
+      color:var(--text);
+    }
+    .incItem code{
+      font-family:var(--mono);
+      font-weight:1000;
+      background:rgba(0,0,0,0.25);
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid var(--border);
+    }
+
+    .stepsBox{
+      margin-top:10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(0,0,0,0.18);
+      display:none;
+    }
+    .stepsBox pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.35;
+      color:var(--text);
+    }
+
+    footer{
+      margin-top:auto;
+      padding:12px 16px 18px;
+      text-align:center;
+      color:var(--muted);
+      font-weight:900;
+      letter-spacing:0.35px;
+      font-size:12px;
+      opacity:0.95;
+    }
+    .sr-only{
+      position:absolute;
+      left:-10000px; top:auto;
+      width:1px; height:1px;
+      overflow:hidden;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="titleWrap">
+      <h1>Sequence Rule Builder</h1>
+      <div class="subtitle">Build the rule. Then use it. (Arithmetic sequences only)</div>
+    </div>
+
+    <div class="badgeRow">
+      <div class="chip">
+        <label for="difficulty">Difficulty</label>
+        <select id="difficulty" aria-label="Difficulty">
+          <option value="easy">🟢 Easy</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="hard">🔴 Hard</option>
+          <option value="random">🎲 Random</option>
+        </select>
+      </div>
+
+      <div class="chip">
+        <label for="direction">Mode</label>
+        <select id="direction" aria-label="Direction mode">
+          <option value="ascending">Ascending</option>
+          <option value="descending">Descending</option>
+          <option value="mixed" selected>Mixed</option>
+        </select>
+      </div>
+
+      <div class="chip" title="Timer is optional. Default is Off.">
+        <label for="timerToggle">Timer</label>
+        <input id="timerToggle" type="checkbox" />
+        <select id="timerLen" aria-label="Timer length">
+          <option value="30">30s</option>
+          <option value="60">60s</option>
+          <option value="90">90s</option>
+          <option value="120">120s</option>
+        </select>
+      </div>
+
+      <div class="chip">
+        <label for="soundToggle">Sound</label>
+        <input id="soundToggle" type="checkbox" checked />
+      </div>
+
+      <div class="chip">
+        <label for="hcToggle">High contrast</label>
+        <input id="hcToggle" type="checkbox" />
+      </div>
+
+      <div class="chip">
+        <button id="resetBtn" type="button" title="Reset session stats (does not reload the page)">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card" aria-label="Game">
+      <div class="cardHeader">
+        <h2 id="roundTitle">Round</h2>
+        <div class="pill" id="pillInfo">Enter = Submit • Esc = Clear • Enter = Next (after correct)</div>
+      </div>
+      <div class="cardBody">
+        <div class="twoCol">
+          <div class="sequenceBox">
+            <div class="seqTitle">
+              <div class="hint" id="seqHint">Look for the constant difference.</div>
+              <div class="hint" id="timerHint">Timer: Off</div>
+            </div>
+            <table class="seqTable" aria-label="Sequence table" id="seqTable"></table>
+          </div>
+
+          <div class="prompt">
+            <!-- ✅ NEW: Shows the student's rule during Stage 2 so it feels like one continued problem -->
+            <div class="ruleBanner" id="ruleBanner" aria-label="Your rule">
+              <div class="top">
+                <div class="label">Your rule (from Stage 1)</div>
+              </div>
+              <div class="expr" id="ruleExpr">3n + 4</div>
+              <div class="note">Now use this same rule to answer Stage 2.</div>
+            </div>
+
+            <div class="promptText" id="promptText">
+              Write an expression for the nth term.
+              <small>Example formats: 3n + 4, 4 + 3n, or Tn = 3n + 4</small>
+            </div>
+
+            <div class="inputRow">
+              <label class="sr-only" for="answerInput">Answer</label>
+              <input id="answerInput" type="text" autocomplete="off" spellcheck="false" placeholder="Type your answer here..." />
+            </div>
+
+            <div class="btnRow">
+              <button class="btn" id="submitBtn" type="button">Submit</button>
+              <button class="btn secondary" id="nextBtn" type="button" disabled>Next</button>
+              <button class="btn danger" id="clearBtn" type="button">Clear</button>
+              <button class="btn secondary" id="stepsBtn" type="button" style="display:none;">Show Steps</button>
+            </div>
+
+            <div class="feedbackBar" aria-live="polite" aria-atomic="true">
+              <div class="status neutral" id="statusText">
+                <span class="tag" id="stageTag">Stage 1 / 2</span>
+                <span id="statusMsg">Type an answer and press Enter.</span>
+              </div>
+              <div>
+                <span class="kbd" id="kbdHint">Enter</span>
+              </div>
+            </div>
+
+            <div class="stepsBox" id="stepsBox" aria-label="Steps">
+              <pre id="stepsPre"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card sideCard" aria-label="Session summary">
+      <div class="cardHeader">
+        <h2>Session Summary</h2>
+        <div class="pill" id="scorePill">Score: 0</div>
+      </div>
+      <div class="cardBody">
+        <div class="statsGrid">
+          <div class="stat">
+            <div class="label">Total</div>
+            <div class="value" id="statTotal">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">Correct</div>
+            <div class="value" id="statCorrect">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">Accuracy</div>
+            <div class="value" id="statAcc">0%</div>
+          </div>
+          <div class="stat">
+            <div class="label">Streak</div>
+            <div class="value" id="statStreak">0</div>
+          </div>
+        </div>
+
+        <div class="smallNote">
+          Each correct answer = +10 points.<br/>
+          Streak bonus: +5 at streaks 5, 10, 15, ...
+        </div>
+
+        <details id="incorrectDetails">
+          <summary>Incorrect list (tap to expand)</summary>
+          <div class="incorrectList" id="incorrectList"></div>
+        </details>
+      </div>
+    </aside>
+  </main>
+
+  <footer>Created by Mr. McLean Math.</footer>
+
+  <script>
+    /***********************
+     * Sequence Rule Builder
+     * Single-file, no libraries
+     ***********************/
+
+    // ---------- Utilities ----------
+    const qs = (sel) => document.querySelector(sel);
+
+    function randInt(min, max){
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function choice(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+    function chance(p){ return Math.random() < p; }
+
+    function formatNumber(x, force2dp=false){
+      if (Math.abs(x) < 1e-12) x = 0;
+      const isInt = Math.abs(x - Math.round(x)) < 1e-12;
+
+      let s;
+      if (force2dp){
+        s = (Math.round(x * 100) / 100).toFixed(2);
+      } else if (isInt){
+        s = String(Math.round(x));
+      } else {
+        s = String((Math.round(x * 100) / 100).toFixed(2));
+        s = s.replace(/\.?0+$/,'');
+      }
+
+      const neg = s.startsWith('-');
+      let t = neg ? s.slice(1) : s;
+      const parts = t.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      t = parts.join('.');
+      return neg ? '-' + t : t;
+    }
+
+    function parseUserNumber(raw){
+      let s = (raw || '').trim().replace(/\s+/g,'');
+      if (!s) return null;
+      if (s.includes(',') && !s.includes('.')) s = s.replace(',', '.');
+      if (s.includes(',') && s.includes('.')) s = s.replace(/,/g,'');
+      const v = Number(s);
+      if (!Number.isFinite(v)) return null;
+      return v;
+    }
+
+    function almostEqual(a,b,eps=1e-9){
+      return Math.abs(a-b) <= eps;
+    }
+
+    function buildExpressionString(a, b){
+      const aStr = formatNumber(a);
+      let termN;
+      if (almostEqual(a, 1)) termN = 'n';
+      else if (almostEqual(a, -1)) termN = '-n';
+      else termN = `${aStr}n`;
+
+      if (almostEqual(b, 0)) return termN;
+
+      const bAbs = Math.abs(b);
+      const bStr = formatNumber(bAbs);
+      const sign = b > 0 ? ' + ' : ' - ';
+      return termN + sign + bStr;
+    }
+
+    // ---------- Expression parser: ax + b (with variable n) ----------
+    function parseLinearExpression(raw){
+      if (!raw) return null;
+      let s = raw.toLowerCase().trim();
+      s = s.replace(/\s+/g,'');
+
+      if (s.includes(',') && !s.includes('.')) s = s.replace(/,/g,'.');
+      if (s.includes(',') && s.includes('.')) s = s.replace(/,/g,'');
+
+      s = s.replace(/^t\(?n\)?=/,'');
+      s = s.replace(/^tn=/,'');
+
+      if (/[()^]/.test(s)) return null;
+      if (!s.includes('n')) return null;
+
+      s = s.replace(/\*/g,'');
+
+      if (s[0] !== '+' && s[0] !== '-') s = '+' + s;
+
+      const terms = [];
+      let i = 0;
+      while (i < s.length){
+        const sign = s[i];
+        i++;
+        let j = i;
+        while (j < s.length && s[j] !== '+' && s[j] !== '-') j++;
+        const term = s.slice(i, j);
+        terms.push({ sign, term });
+        i = j;
+      }
+
+      let a = 0;
+      let b = 0;
+
+      for (const {sign, term} of terms){
+        if (!term) return null;
+        const mult = (sign === '-') ? -1 : 1;
+
+        if (term.includes('n')){
+          if (!/n$/.test(term) && term !== 'n') return null;
+          let coeffStr = term === 'n' ? '' : term.slice(0, -1);
+          if (coeffStr === '') a += 1 * mult;
+          else {
+            const coeff = Number(coeffStr);
+            if (!Number.isFinite(coeff)) return null;
+            a += coeff * mult;
+          }
+        } else {
+          const c = Number(term);
+          if (!Number.isFinite(c)) return null;
+          b += c * mult;
+        }
+      }
+
+      if (Math.abs(a) < 1e-12) return null;
+      return {a, b};
+    }
+
+    // ---------- Sound (Web Audio beeps) ----------
+    let audioCtx = null;
+    function beep(type){
+      if (!state.soundOn) return;
+      try{
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = audioCtx;
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g);
+        g.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+        let f1=440, f2=660, dur=0.12;
+
+        if (type === 'good'){ f1 = 523.25; f2 = 783.99; dur = 0.13; }
+        else if (type === 'bad'){ f1 = 196.00; f2 = 146.83; dur = 0.16; }
+
+        o.type = 'sine';
+        o.frequency.setValueAtTime(f1, now);
+        o.frequency.exponentialRampToValueAtTime(f2, now + dur);
+
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.22, now + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+        o.start(now);
+        o.stop(now + dur + 0.02);
+      }catch(e){}
+    }
+
+    // ---------- Timer ----------
+    let timerId = null;
+    function startTimer(){
+      stopTimer();
+      if (!state.timerOn) return;
+      state.timeLeft = state.timerLen;
+      renderTimerHint();
+      timerId = setInterval(()=>{
+        state.timeLeft--;
+        renderTimerHint();
+        if (state.timeLeft <= 0){
+          stopTimer();
+          handleTimeout();
+        }
+      }, 1000);
+    }
+    function stopTimer(){
+      if (timerId) clearInterval(timerId);
+      timerId = null;
+    }
+    function renderTimerHint(){
+      const el = qs('#timerHint');
+      el.textContent = state.timerOn ? `Timer: ${state.timeLeft}s` : 'Timer: Off';
+    }
+    function handleTimeout(){
+      setStatus('bad', `Time's up.`, state.stage === 1 ? 'Stage 1 / 2' : 'Stage 2 / 2');
+      beep('bad');
+      state.total++;
+      state.streak = 0;
+      addIncorrectItem('Timed out');
+      updateStatsUI();
+      showSteps();
+      qs('#nextBtn').disabled = true;
+    }
+
+    // ---------- State ----------
+    const state = {
+      stage: 1,
+      awaitingNext: false,
+      soundOn: true,
+      timerOn: false,
+      timerLen: 60,
+      timeLeft: 0,
+
+      total: 0,
+      correct: 0,
+      streak: 0,
+      score: 0,
+
+      difficulty: 'easy',
+      effectiveDir: 'ascending',
+
+      a1: 0, d: 0, a: 0, b: 0,
+      startN: 1,
+      shownCount: 4,
+
+      stage2Type: 'value',
+      targetN: 10,
+      targetValue: 0,
+
+      incorrect: [],
+      lastStudentRuleRaw: ''
+    };
+
+    // ---------- UI elements ----------
+    const elDifficulty = qs('#difficulty');
+    const elDirection = qs('#direction');
+    const elTimerToggle = qs('#timerToggle');
+    const elTimerLen = qs('#timerLen');
+    const elSoundToggle = qs('#soundToggle');
+    const elHcToggle = qs('#hcToggle');
+
+    const elSeqTable = qs('#seqTable');
+    const elPromptText = qs('#promptText');
+    const elAnswerInput = qs('#answerInput');
+    const elSubmitBtn = qs('#submitBtn');
+    const elNextBtn = qs('#nextBtn');
+    const elClearBtn = qs('#clearBtn');
+    const elStepsBtn = qs('#stepsBtn');
+    const elStepsBox = qs('#stepsBox');
+    const elStepsPre = qs('#stepsPre');
+
+    const elStageTag = qs('#stageTag');
+    const elStatusMsg = qs('#statusMsg');
+    const elStatusText = qs('#statusText');
+    const elRoundTitle = qs('#roundTitle');
+
+    const elScorePill = qs('#scorePill');
+    const elStatTotal = qs('#statTotal');
+    const elStatCorrect = qs('#statCorrect');
+    const elStatAcc = qs('#statAcc');
+    const elStatStreak = qs('#statStreak');
+    const elIncorrectList = qs('#incorrectList');
+
+    const elRuleBanner = qs('#ruleBanner');
+    const elRuleExpr = qs('#ruleExpr');
+
+    // ---------- Status ----------
+    function setStatus(kind, msg, tagText){
+      elStatusText.classList.remove('good','bad','neutral');
+      elStatusText.classList.add(kind);
+      elStatusMsg.textContent = msg;
+      if (tagText) elStageTag.textContent = tagText;
+    }
+    function clearInput(){
+      elAnswerInput.value = '';
+      elAnswerInput.focus();
+    }
+    function showSteps(){
+      elStepsBox.style.display = 'block';
+      elStepsBtn.style.display = 'none';
+    }
+    function hideSteps(){
+      elStepsBox.style.display = 'none';
+      elStepsBtn.style.display = 'none';
+    }
+
+    // ---------- Problem generation ----------
+    function pickDifficulty(){
+      const d = elDifficulty.value;
+      if (d === 'random') return choice(['easy','medium','hard']);
+      return d;
+    }
+
+    function pickDirectionForThisQuestion(difficulty){
+      // Requirement: Easy must be ascending only
+      if (difficulty === 'easy') return 'ascending';
+
+      const mode = elDirection.value;
+      if (mode === 'mixed') return chance(0.5) ? 'ascending' : 'descending';
+      return mode;
+    }
+
+    function genArithmeticSequence(difficulty){
+      const dir = pickDirectionForThisQuestion(difficulty);
+
+      // Rare negative first terms:
+      const negProb = (difficulty === 'easy') ? 0.05 : (difficulty === 'medium' ? 0.10 : 0.15);
+
+      let a1, d;
+
+      if (difficulty === 'easy'){
+        d = randInt(2,9);
+        a1 = randInt(1, 30);
+        if (chance(negProb)) a1 = -randInt(1, 12);
+      } else if (difficulty === 'medium'){
+        d = randInt(2,15) * (dir === 'descending' ? -1 : 1);
+        a1 = randInt(2, 50);
+        if (chance(negProb)) a1 = -randInt(1, 18);
+      } else {
+        const stepCandidates = [];
+        for (let i=2;i<=99;i++){
+          stepCandidates.push(i/10);
+        }
+        const simple2dp = [0.25,0.5,0.75,1.25,1.5,2.5,3.75,4.5,6.25,7.5];
+        simple2dp.forEach(v=>stepCandidates.push(v));
+        let step = choice(stepCandidates);
+        d = (dir === 'descending' ? -step : step);
+
+        const a1Pool = [];
+        for (let k=0;k<40;k++){
+          const base = randInt(0, 50);
+          if (chance(0.7)) a1Pool.push(base);
+          else a1Pool.push(base + choice([0.25,0.5,0.75]));
+        }
+        a1 = choice(a1Pool);
+        if (chance(negProb)) a1 = -choice([1,2,3,4,5,6,8,10,12,15,18,20]) - (chance(0.4) ? choice([0.25,0.5,0.75]) : 0);
+        a1 = Math.round(a1 * 100) / 100;
+        d = Math.round(d * 100) / 100;
+      }
+
+      const a = d;
+      const b = Math.round((a1 - d) * 100) / 100;
+
+      // ✅ Fix: Easy + Medium must ALWAYS start at n=1 (no shifted tables)
+      let startN = 1;
+      if (difficulty === 'hard'){
+        startN = chance(0.55) ? 1 : randInt(2,7);
+      }
+      const shownCount = 4;
+
+      let stage2Type = 'value';
+      if (difficulty !== 'easy'){
+        stage2Type = chance(0.55) ? 'value' : 'findn';
+      }
+
+      let targetN;
+      if (difficulty === 'easy') targetN = randInt(10, 60);
+      else if (difficulty === 'medium') targetN = randInt(12, 70);
+      else targetN = randInt(10, 50);
+
+      const targetValue = Math.round((a * targetN + b) * 100) / 100;
+
+      const maxTermAbs = (difficulty === 'easy') ? 260 : (difficulty === 'medium' ? 520 : 450);
+      const sampleCheckN = Math.max(targetN, startN + shownCount - 1);
+      const maxShown = Math.abs(a * sampleCheckN + b);
+      if (maxShown > maxTermAbs){
+        return genArithmeticSequence(difficulty);
+      }
+
+      return {a1, d, a, b, startN, shownCount, stage2Type, targetN, targetValue, dir};
+    }
+
+    function renderSequenceTable(){
+      const nVals = [];
+      const tVals = [];
+      for (let i=0;i<state.shownCount;i++){
+        const n = state.startN + i;
+        nVals.push(n);
+        const t = Math.round((state.a * n + state.b) * 100) / 100;
+        tVals.push(t);
+      }
+
+      const thRow = `<tr>${nVals.map(n=>`<th>${n}</th>`).join('')}</tr>`;
+      const tdRow = `<tr>${tVals.map(t=>`<td>${formatNumber(t)}</td>`).join('')}</tr>`;
+      elSeqTable.innerHTML = thRow + tdRow;
+
+      const diffLabel = (state.difficulty === 'easy') ? '🟢 Easy' : (state.difficulty === 'medium') ? '🟡 Medium' : '🔴 Hard';
+      const dirLabel = state.effectiveDir === 'ascending' ? 'Ascending' : 'Descending';
+      const shownRange = `${state.startN}–${state.startN + state.shownCount - 1}`;
+      qs('#seqHint').textContent = `${diffLabel} • ${dirLabel} • n shown: ${shownRange}`;
+    }
+
+    function buildStage1Prompt(){
+      const variants = [
+        "Write an expression for the nth term.",
+        "Build the rule for the nth term.",
+        "Write a formula for the nth term."
+      ];
+      const lead = choice(variants);
+      const extra = "Example formats: 3n + 4, 4 + 3n, or Tn = 3n + 4";
+      return `${lead}<small>${extra}</small>`;
+    }
+
+    function ordinal(n){
+      const s = ["th","st","nd","rd"];
+      const v = n % 100;
+      return n + (s[(v-20)%10] || s[v] || s[0]);
+    }
+
+    function buildStage2Prompt(){
+      if (state.stage2Type === 'value'){
+        const variants = [
+          `Now use your rule above: calculate the value of the ${ordinal(state.targetN)} term.`,
+          `Using your rule above: what is the value of the ${ordinal(state.targetN)} term?`,
+          `Use your rule above to calculate the ${ordinal(state.targetN)} term.`
+        ];
+        return `${choice(variants)}<small>Substitute n = ${state.targetN}.</small>`;
+      } else {
+        const valStr = formatNumber(state.targetValue, state.difficulty === 'hard' && !Number.isInteger(state.targetValue));
+        const variants = [
+          `Now use your rule above: calculate n when the term is ${valStr}.`,
+          `Using your rule above: which term number has the value ${valStr}? Calculate n.`,
+          `Use your rule above: calculate n if the term equals ${valStr}.`
+        ];
+        return `${choice(variants)}<small>Solve for n.</small>`;
+      }
+    }
+
+    function buildSteps(stage){
+      const d = state.a;
+      const a1 = state.a1;
+      const b = state.b;
+      const expr = buildExpressionString(state.a, state.b);
+      const dStr = formatNumber(d);
+      const a1Str = formatNumber(a1);
+      const bStr = formatNumber(b);
+
+      let lines = [];
+      lines.push("How to build the nth-term rule (arithmetic sequence):");
+      lines.push("1) Find the common difference (how much it changes each step).");
+      lines.push(`   Here, the difference is d = ${dStr}.`);
+      lines.push("2) Use: Tn = a1 + (n - 1)d");
+      lines.push(`   a1 = ${a1Str}`);
+      lines.push("3) Expand to the form dn + (a1 - d):");
+      lines.push(`   Tn = ${dStr}n + (${a1Str} - ${dStr}) = ${dStr}n + ${bStr}`);
+      lines.push(`   So an equivalent expression is: ${expr}`);
+      lines.push("");
+
+      if (stage === 2){
+        if (state.stage2Type === 'value'){
+          const n = state.targetN;
+          const val = state.targetValue;
+          const valStr = formatNumber(val);
+          lines.push(`Stage 2: Calculate the ${ordinal(n)} term`);
+          lines.push(`Substitute n = ${n}:`);
+          lines.push(`T${n} = (${dStr})(${n}) + ${bStr}`);
+          lines.push(`T${n} = ${valStr}`);
+        } else {
+          const n = state.targetN;
+          const val = state.targetValue;
+          const valStr = formatNumber(val);
+          lines.push(`Stage 2: Find n when the term value is ${valStr}`);
+          lines.push("Set the expression equal to the value and solve:");
+          lines.push(`${dStr}n + ${bStr} = ${valStr}`);
+          const rhs = Math.round((val - b) * 100) / 100;
+          const rhsStr = formatNumber(rhs);
+          lines.push(`${dStr}n = ${valStr} - ${bStr} = ${rhsStr}`);
+          const nStr = formatNumber(n);
+          lines.push(`n = ${rhsStr} / ${dStr} = ${nStr}`);
+        }
+      }
+      return lines.join("\n");
+    }
+
+    // Variety guard (avoid repeating same a1,d)
+    const recentSignature = [];
+    function signature(a1,d){ return `${a1}|${d}`; }
+    function pushSignature(sig){
+      recentSignature.push(sig);
+      while (recentSignature.length > 18) recentSignature.shift();
+    }
+    function isTooRecent(sig){
+      return recentSignature.slice(-10).includes(sig);
+    }
+
+    function newQuestion(){
+      stopTimer();
+      hideSteps();
+
+      // Stage resets
+      state.stage = 1;
+      state.awaitingNext = false;
+      qs('#nextBtn').disabled = true;
+
+      // Hide rule banner until Stage 2
+      elRuleBanner.style.display = 'none';
+      elRuleExpr.textContent = '';
+      state.lastStudentRuleRaw = '';
+
+      state.difficulty = pickDifficulty();
+
+      let g, sig, tries = 0;
+      do{
+        g = genArithmeticSequence(state.difficulty);
+        sig = signature(g.a1, g.d);
+        tries++;
+      }while(isTooRecent(sig) && tries < 50);
+      pushSignature(sig);
+
+      state.a1 = g.a1;
+      state.d = g.d;
+      state.a = g.a;
+      state.b = g.b;
+      state.startN = g.startN;
+      state.shownCount = g.shownCount;
+      state.stage2Type = g.stage2Type;
+      state.targetN = g.targetN;
+      state.targetValue = g.targetValue;
+      state.effectiveDir = g.dir;
+
+      renderSequenceTable();
+
+      elRoundTitle.textContent = `Round • ${state.difficulty.toUpperCase()} • ${state.effectiveDir.toUpperCase()}`;
+      elPromptText.innerHTML = buildStage1Prompt();
+      elAnswerInput.placeholder = "Type your expression (nth term)...";
+      clearInput();
+
+      setStatus('neutral', 'Type your expression and press Enter.', 'Stage 1 / 2');
+      startTimer();
+      renderTimerHint();
+    }
+
+    // ---------- Scoring & incorrect list ----------
+    function addScoreForCorrect(){
+      state.score += 10;
+      state.correct += 1;
+      state.streak += 1;
+      if (state.streak > 0 && state.streak % 5 === 0) state.score += 5;
+    }
+    function recordAttempt(correct){
+      state.total += 1;
+      if (!correct) state.streak = 0;
+      updateStatsUI();
+    }
+    function updateStatsUI(){
+      elScorePill.textContent = `Score: ${state.score}`;
+      elStatTotal.textContent = state.total;
+      elStatCorrect.textContent = state.correct;
+      const acc = state.total === 0 ? 0 : Math.round((state.correct / state.total) * 100);
+      elStatAcc.textContent = `${acc}%`;
+      elStatStreak.textContent = state.streak;
+    }
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+    function addIncorrectItem(reason){
+      const expr = buildExpressionString(state.a, state.b);
+      const dLabel = (state.difficulty === 'easy') ? '🟢' : (state.difficulty === 'medium') ? '🟡' : '🔴';
+      const modeLabel = (state.effectiveDir === 'ascending') ? 'Asc' : 'Desc';
+      const stageText = state.stage === 1 ? 'Stage 1' : 'Stage 2';
+
+      let targetLine = '';
+      if (state.stage === 2){
+        if (state.stage2Type === 'value') targetLine = `Target: value of ${ordinal(state.targetN)} term`;
+        else targetLine = `Target: find n when term = ${formatNumber(state.targetValue)}`;
+      } else {
+        targetLine = `Target: write nth-term expression`;
+      }
+
+      state.incorrect.push({difficulty:dLabel, mode:modeLabel, stage:stageText, reason, correctExpr:expr, targetLine});
+      renderIncorrectList();
+    }
+    function renderIncorrectList(){
+      if (state.incorrect.length === 0){
+        elIncorrectList.innerHTML = `<div class="incItem">No incorrect answers yet.</div>`;
+        return;
+      }
+      elIncorrectList.innerHTML = state.incorrect.slice(-30).reverse().map(item=>{
+        return `
+          <div class="incItem">
+            <div><strong>${item.difficulty} ${item.mode} • ${item.stage}</strong></div>
+            <div style="margin-top:6px;">${item.targetLine}</div>
+            <div style="margin-top:6px;">Reason: ${escapeHtml(item.reason)}</div>
+            <div style="margin-top:6px;">Correct rule: <code>${escapeHtml(item.correctExpr)}</code></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ---------- Validation ----------
+    function checkStage1Expression(userRaw){
+      const parsed = parseLinearExpression(userRaw);
+      if (!parsed) return { ok:false, msg:"I couldn't read that as a linear expression in n. Try something like 3n + 4." };
+
+      if (almostEqual(parsed.a, state.a, 1e-9) && almostEqual(parsed.b, state.b, 1e-9)){
+        return { ok:true };
+      }
+      return { ok:false, msg:"Not quite. Check the constant difference and the first term, then try again." };
+    }
+
+    function checkStage2Answer(userRaw){
+      const v = parseUserNumber(userRaw);
+      if (v === null) return { ok:false, msg:"Please enter a number." };
+
+      if (state.stage2Type === 'value'){
+        const correct = state.targetValue;
+        if (almostEqual(v, correct, 1e-2)) return { ok:true };
+        return { ok:false, msg:"Not quite. Use your rule above and substitute n." };
+      } else {
+        const correctN = state.targetN;
+        if (almostEqual(v, correctN, 1e-9)) return { ok:true };
+        return { ok:false, msg:"Not quite. Use your rule above and solve for n." };
+      }
+    }
+
+    // ---------- Stage transitions ----------
+    function lockCorrectAndWaitNext(){
+      state.awaitingNext = true;
+      elNextBtn.disabled = false;
+      setStatus('good', 'Correct! Press Enter or click Next.', state.stage === 1 ? 'Stage 1 / 2' : 'Stage 2 / 2');
+      beep('good');
+      stopTimer();
+      renderTimerHint();
+    }
+
+    function advanceOnNext(){
+      if (!state.awaitingNext) return;
+
+      state.awaitingNext = false;
+      elNextBtn.disabled = true;
+
+      if (state.stage === 1){
+        // ✅ Stage 2 uses SAME problem; show the student's rule clearly
+        state.stage = 2;
+
+        // show rule banner with what THEY typed, but cleaned up if possible
+        const parsed = parseLinearExpression(state.lastStudentRuleRaw);
+        const display = parsed ? buildExpressionString(parsed.a, parsed.b) : (state.lastStudentRuleRaw || buildExpressionString(state.a, state.b));
+        elRuleExpr.textContent = display;
+        elRuleBanner.style.display = 'block';
+
+        elPromptText.innerHTML = buildStage2Prompt();
+        elAnswerInput.placeholder = (state.stage2Type === 'value')
+          ? `Enter the value of the ${ordinal(state.targetN)} term...`
+          : "Enter the value of n...";
+        clearInput();
+
+        hideSteps();
+        setStatus('neutral', 'Use your rule above and press Enter.', 'Stage 2 / 2');
+        startTimer();
+      } else {
+        newQuestion();
+      }
+    }
+
+    function showStepsButton(){
+      elStepsBtn.style.display = 'inline-block';
+    }
+    function setStepsContent(){
+      elStepsPre.textContent = buildSteps(state.stage);
+    }
+
+    // ---------- Submit handler ----------
+    function handleSubmit(){
+      if (state.awaitingNext){
+        advanceOnNext();
+        return;
+      }
+
+      const raw = elAnswerInput.value;
+
+      if (state.stage === 1){
+        const res = checkStage1Expression(raw);
+        if (res.ok){
+          state.lastStudentRuleRaw = raw;
+          addScoreForCorrect();
+          recordAttempt(true);
+          lockCorrectAndWaitNext();
+        } else {
+          recordAttempt(false);
+          setStatus('bad', res.msg, 'Stage 1 / 2');
+          beep('bad');
+          showStepsButton();
+          setStepsContent();
+          elStepsBox.style.display = 'none';
+          elStepsBtn.onclick = ()=>{ showSteps(); };
+          addIncorrectItem(res.msg);
+        }
+      } else {
+        const res = checkStage2Answer(raw);
+        if (res.ok){
+          addScoreForCorrect();
+          recordAttempt(true);
+          lockCorrectAndWaitNext();
+        } else {
+          recordAttempt(false);
+          setStatus('bad', res.msg, 'Stage 2 / 2');
+          beep('bad');
+          showStepsButton();
+          setStepsContent();
+          elStepsBox.style.display = 'none';
+          elStepsBtn.onclick = ()=>{ showSteps(); };
+          addIncorrectItem(res.msg);
+        }
+      }
+    }
+
+    function handleClear(){
+      elAnswerInput.value = '';
+      elAnswerInput.focus();
+      setStatus('neutral', 'Cleared. Type your answer and press Enter.', state.stage === 1 ? 'Stage 1 / 2' : 'Stage 2 / 2');
+    }
+
+    // ---------- Controls ----------
+    elSubmitBtn.addEventListener('click', handleSubmit);
+    elNextBtn.addEventListener('click', advanceOnNext);
+    elClearBtn.addEventListener('click', handleClear);
+
+    elSoundToggle.addEventListener('change', ()=>{ state.soundOn = elSoundToggle.checked; });
+
+    elHcToggle.addEventListener('change', ()=>{
+      document.body.classList.toggle('hc', elHcToggle.checked);
+    });
+
+    elTimerToggle.addEventListener('change', ()=>{
+      state.timerOn = elTimerToggle.checked;
+      state.timerLen = Number(elTimerLen.value);
+      renderTimerHint();
+      if (state.timerOn && !state.awaitingNext) startTimer();
+      if (!state.timerOn) stopTimer();
+    });
+
+    elTimerLen.addEventListener('change', ()=>{
+      state.timerLen = Number(elTimerLen.value);
+      if (state.timerOn && !state.awaitingNext) startTimer();
+    });
+
+    elDifficulty.addEventListener('change', ()=>{ newQuestion(); });
+    elDirection.addEventListener('change', ()=>{ newQuestion(); });
+
+    qs('#resetBtn').addEventListener('click', ()=>{
+      state.total = 0;
+      state.correct = 0;
+      state.streak = 0;
+      state.score = 0;
+      state.incorrect = [];
+      updateStatsUI();
+      renderIncorrectList();
+      setStatus('neutral','Session reset. New round ready.', 'Stage 1 / 2');
+      newQuestion();
+    });
+
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter'){
+        e.preventDefault();
+        if (state.awaitingNext) advanceOnNext();
+        else handleSubmit();
+      } else if (e.key === 'Escape'){
+        e.preventDefault();
+        handleClear();
+      }
+    });
+
+    // ---------- Init ----------
+    function init(){
+      state.soundOn = elSoundToggle.checked;
+      state.timerOn = elTimerToggle.checked;
+      state.timerLen = Number(elTimerLen.value);
+      renderIncorrectList();
+      updateStatsUI();
+      newQuestion();
+    }
+    init();
+  </script>
+</body>
+</html>
