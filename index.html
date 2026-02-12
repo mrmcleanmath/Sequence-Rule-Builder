@@ -8,14 +8,12 @@
     :root{
       --bg:#0f1220;
       --card:#171a2c;
-      --card2:#1f2440;
       --text:#f2f4ff;
       --muted:#b9c0ff;
       --accent:#7c5cff;
       --accent2:#27d3ff;
       --good:#2ecc71;
       --bad:#e74c3c;
-      --warn:#f1c40f;
       --border:rgba(255,255,255,0.14);
       --shadow:0 10px 26px rgba(0,0,0,0.45);
       --radius:18px;
@@ -25,7 +23,6 @@
     body.hc{
       --bg:#000;
       --card:#000;
-      --card2:#000;
       --text:#fff;
       --muted:#fff;
       --accent:#fff;
@@ -56,9 +53,7 @@
       justify-content:space-between;
       gap:12px;
     }
-    .titleWrap{
-      display:flex; flex-direction:column; gap:6px;
-    }
+    .titleWrap{display:flex; flex-direction:column; gap:6px;}
     h1{
       margin:0;
       font-size:28px;
@@ -87,9 +82,7 @@
       font-weight:700;
     }
     .chip label{font-weight:700;color:var(--muted)}
-    .chip select,.chip input[type="checkbox"]{
-      accent-color:var(--accent2);
-    }
+    .chip select,.chip input[type="checkbox"]{accent-color:var(--accent2);}
     .chip select{
       background:transparent;
       color:var(--text);
@@ -99,16 +92,9 @@
       font-weight:800;
       outline:none;
     }
-
-    /* ✅ Fix: dropdown option text visibility */
-    select option{
-      background: var(--card);
-      color: var(--text);
-    }
-    body.hc select option{
-      background:#000;
-      color:#fff;
-    }
+    /* Fix: dropdown option text visibility */
+    select option{ background: var(--card); color: var(--text); }
+    body.hc select option{ background:#000; color:#fff; }
 
     .chip button{
       border:1px solid var(--border);
@@ -120,6 +106,7 @@
       cursor:pointer;
     }
     .chip button:hover{transform:translateY(-1px)}
+
     main{
       max-width:1100px;
       width:100%;
@@ -151,11 +138,7 @@
       align-items:center;
       gap:10px;
     }
-    .cardHeader h2{
-      margin:0;
-      font-size:16px;
-      letter-spacing:0.3px;
-    }
+    .cardHeader h2{margin:0;font-size:16px;letter-spacing:0.3px;}
     .pill{
       font-family:var(--mono);
       font-size:12px;
@@ -188,11 +171,7 @@
       gap:10px;
       margin-bottom:10px;
     }
-    .seqTitle .hint{
-      font-size:12px;
-      color:var(--muted);
-      font-weight:700;
-    }
+    .seqTitle .hint{font-size:12px;color:var(--muted);font-weight:700;}
 
     table.seqTable{
       width:100%;
@@ -218,7 +197,6 @@
       border-right:1px solid var(--border);
     }
     table.seqTable td:last-child{border-right:none}
-    table.seqTable tr:last-child td{border-bottom:none}
 
     .prompt{
       padding:12px;
@@ -275,11 +253,11 @@
       display:block;
       margin-top:6px;
       color:var(--muted);
-     ullen;
       font-weight:800;
       font-size:12px;
       letter-spacing:0.3px;
     }
+
     .inputRow{
       display:flex;
       flex-wrap:wrap;
@@ -298,6 +276,7 @@
       font-weight:900;
       font-family:var(--mono);
     }
+
     .btnRow{
       display:flex;
       gap:10px;
@@ -331,8 +310,6 @@
       border:1px solid rgba(231,76,60,0.55);
       box-shadow:none;
     }
-    .btn:hover{transform:translateY(-1px)}
-    .btn:active{transform:translateY(0px)}
 
     .feedbackBar{
       display:flex;
@@ -400,13 +377,6 @@
       font-size:18px;
       font-weight:1100;
       font-family:var(--mono);
-    }
-    .smallNote{
-      margin-top:10px;
-      color:var(--muted);
-      font-size:12px;
-      font-weight:700;
-      line-height:1.25;
     }
 
     details{
@@ -555,12 +525,12 @@
           </div>
 
           <div class="prompt">
-            <!-- ✅ NEW: Shows the student's rule during Stage 2 so it feels like one continued problem -->
+            <!-- Shows the student's rule during Stage 2 so it feels like one continued problem -->
             <div class="ruleBanner" id="ruleBanner" aria-label="Your rule">
               <div class="top">
                 <div class="label">Your rule (from Stage 1)</div>
               </div>
-              <div class="expr" id="ruleExpr">3n + 4</div>
+              <div class="expr" id="ruleExpr"></div>
               <div class="note">Now use this same rule to answer Stage 2.</div>
             </div>
 
@@ -586,9 +556,7 @@
                 <span class="tag" id="stageTag">Stage 1 / 2</span>
                 <span id="statusMsg">Type an answer and press Enter.</span>
               </div>
-              <div>
-                <span class="kbd" id="kbdHint">Enter</span>
-              </div>
+              <div><span class="kbd">Enter</span></div>
             </div>
 
             <div class="stepsBox" id="stepsBox" aria-label="Steps">
@@ -624,7 +592,7 @@
           </div>
         </div>
 
-        <div class="smallNote">
+        <div style="margin-top:10px;color:var(--muted);font-size:12px;font-weight:700;line-height:1.25;">
           Each correct answer = +10 points.<br/>
           Streak bonus: +5 at streaks 5, 10, 15, ...
         </div>
@@ -815,17 +783,19 @@
       timerId = null;
     }
     function renderTimerHint(){
-      const el = qs('#timerHint');
-      el.textContent = state.timerOn ? `Timer: ${state.timeLeft}s` : 'Timer: Off';
+      qs('#timerHint').textContent = state.timerOn ? `Timer: ${state.timeLeft}s` : 'Timer: Off';
     }
     function handleTimeout(){
       setStatus('bad', `Time's up.`, state.stage === 1 ? 'Stage 1 / 2' : 'Stage 2 / 2');
       beep('bad');
-      state.total++;
-      state.streak = 0;
-      addIncorrectItem('Timed out');
-      updateStatsUI();
-      showSteps();
+      // Count a timeout as ONE attempt, but only once per stage
+      if (!state.stageAttemptLocked){
+        state.stageAttemptLocked = true;
+        recordAttempt(false);
+        addIncorrectItem('Timed out');
+        setStepsContent();
+        showSteps();
+      }
       qs('#nextBtn').disabled = true;
     }
 
@@ -855,7 +825,13 @@
       targetValue: 0,
 
       incorrect: [],
-      lastStudentRuleRaw: ''
+      lastStudentRuleRaw: '',
+
+      // ✅ Anti-spam / loophole protection:
+      // - Only count an attempt if input is non-empty AND has changed since last counted submit for this stage.
+      // - Also lock after a counted attempt if input stays identical.
+      stageAttemptLocked: false,
+      lastCountedSubmissionKey: ''
     };
 
     // ---------- UI elements ----------
@@ -891,6 +867,11 @@
     const elRuleBanner = qs('#ruleBanner');
     const elRuleExpr = qs('#ruleExpr');
 
+    // When input changes, allow another counted attempt (prevents spam on same text)
+    elAnswerInput.addEventListener('input', ()=>{
+      state.stageAttemptLocked = false;
+    });
+
     // ---------- Status ----------
     function setStatus(kind, msg, tagText){
       elStatusText.classList.remove('good','bad','neutral');
@@ -901,6 +882,7 @@
     function clearInput(){
       elAnswerInput.value = '';
       elAnswerInput.focus();
+      state.stageAttemptLocked = false;
     }
     function showSteps(){
       elStepsBox.style.display = 'block';
@@ -921,7 +903,6 @@
     function pickDirectionForThisQuestion(difficulty){
       // Requirement: Easy must be ascending only
       if (difficulty === 'easy') return 'ascending';
-
       const mode = elDirection.value;
       if (mode === 'mixed') return chance(0.5) ? 'ascending' : 'descending';
       return mode;
@@ -929,8 +910,6 @@
 
     function genArithmeticSequence(difficulty){
       const dir = pickDirectionForThisQuestion(difficulty);
-
-      // Rare negative first terms:
       const negProb = (difficulty === 'easy') ? 0.05 : (difficulty === 'medium' ? 0.10 : 0.15);
 
       let a1, d;
@@ -945,9 +924,7 @@
         if (chance(negProb)) a1 = -randInt(1, 18);
       } else {
         const stepCandidates = [];
-        for (let i=2;i<=99;i++){
-          stepCandidates.push(i/10);
-        }
+        for (let i=2;i<=99;i++) stepCandidates.push(i/10);
         const simple2dp = [0.25,0.5,0.75,1.25,1.5,2.5,3.75,4.5,6.25,7.5];
         simple2dp.forEach(v=>stepCandidates.push(v));
         let step = choice(stepCandidates);
@@ -968,7 +945,7 @@
       const a = d;
       const b = Math.round((a1 - d) * 100) / 100;
 
-      // ✅ Fix: Easy + Medium must ALWAYS start at n=1 (no shifted tables)
+      // Easy + Medium must ALWAYS start at n=1
       let startN = 1;
       if (difficulty === 'hard'){
         startN = chance(0.55) ? 1 : randInt(2,7);
@@ -990,9 +967,7 @@
       const maxTermAbs = (difficulty === 'easy') ? 260 : (difficulty === 'medium' ? 520 : 450);
       const sampleCheckN = Math.max(targetN, startN + shownCount - 1);
       const maxShown = Math.abs(a * sampleCheckN + b);
-      if (maxShown > maxTermAbs){
-        return genArithmeticSequence(difficulty);
-      }
+      if (maxShown > maxTermAbs) return genArithmeticSequence(difficulty);
 
       return {a1, d, a, b, startN, shownCount, stage2Type, targetN, targetValue, dir};
     }
@@ -1076,24 +1051,20 @@
       if (stage === 2){
         if (state.stage2Type === 'value'){
           const n = state.targetN;
-          const val = state.targetValue;
-          const valStr = formatNumber(val);
+          const valStr = formatNumber(state.targetValue);
           lines.push(`Stage 2: Calculate the ${ordinal(n)} term`);
           lines.push(`Substitute n = ${n}:`);
           lines.push(`T${n} = (${dStr})(${n}) + ${bStr}`);
           lines.push(`T${n} = ${valStr}`);
         } else {
-          const n = state.targetN;
-          const val = state.targetValue;
-          const valStr = formatNumber(val);
+          const valStr = formatNumber(state.targetValue);
           lines.push(`Stage 2: Find n when the term value is ${valStr}`);
           lines.push("Set the expression equal to the value and solve:");
           lines.push(`${dStr}n + ${bStr} = ${valStr}`);
-          const rhs = Math.round((val - b) * 100) / 100;
+          const rhs = Math.round((state.targetValue - b) * 100) / 100;
           const rhsStr = formatNumber(rhs);
           lines.push(`${dStr}n = ${valStr} - ${bStr} = ${rhsStr}`);
-          const nStr = formatNumber(n);
-          lines.push(`n = ${rhsStr} / ${dStr} = ${nStr}`);
+          lines.push(`n = ${rhsStr} / ${dStr} = ${formatNumber(state.targetN)}`);
         }
       }
       return lines.join("\n");
@@ -1114,15 +1085,17 @@
       stopTimer();
       hideSteps();
 
-      // Stage resets
       state.stage = 1;
       state.awaitingNext = false;
-      qs('#nextBtn').disabled = true;
+      elNextBtn.disabled = true;
 
-      // Hide rule banner until Stage 2
       elRuleBanner.style.display = 'none';
       elRuleExpr.textContent = '';
       state.lastStudentRuleRaw = '';
+
+      // Reset anti-spam guards for the new stage/question
+      state.stageAttemptLocked = false;
+      state.lastCountedSubmissionKey = '';
 
       state.difficulty = pickDifficulty();
 
@@ -1157,7 +1130,7 @@
       renderTimerHint();
     }
 
-    // ---------- Scoring & incorrect list ----------
+    // ---------- Stats ----------
     function addScoreForCorrect(){
       state.score += 10;
       state.correct += 1;
@@ -1171,15 +1144,17 @@
     }
     function updateStatsUI(){
       elScorePill.textContent = `Score: ${state.score}`;
-      elStatTotal.textContent = state.total;
-      elStatCorrect.textContent = state.correct;
+      qs('#statTotal').textContent = state.total;
+      qs('#statCorrect').textContent = state.correct;
       const acc = state.total === 0 ? 0 : Math.round((state.correct / state.total) * 100);
-      elStatAcc.textContent = `${acc}%`;
-      elStatStreak.textContent = state.streak;
+      qs('#statAcc').textContent = `${acc}%`;
+      qs('#statStreak').textContent = state.streak;
     }
+
     function escapeHtml(s){
       return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     }
+
     function addIncorrectItem(reason){
       const expr = buildExpressionString(state.a, state.b);
       const dLabel = (state.difficulty === 'easy') ? '🟢' : (state.difficulty === 'medium') ? '🟡' : '🔴';
@@ -1197,6 +1172,7 @@
       state.incorrect.push({difficulty:dLabel, mode:modeLabel, stage:stageText, reason, correctExpr:expr, targetLine});
       renderIncorrectList();
     }
+
     function renderIncorrectList(){
       if (state.incorrect.length === 0){
         elIncorrectList.innerHTML = `<div class="incItem">No incorrect answers yet.</div>`;
@@ -1217,11 +1193,8 @@
     // ---------- Validation ----------
     function checkStage1Expression(userRaw){
       const parsed = parseLinearExpression(userRaw);
-      if (!parsed) return { ok:false, msg:"I couldn't read that as a linear expression in n. Try something like 3n + 4." };
-
-      if (almostEqual(parsed.a, state.a, 1e-9) && almostEqual(parsed.b, state.b, 1e-9)){
-        return { ok:true };
-      }
+      if (!parsed) return { ok:false, msg:"Type a rule using n (example: 3n + 4)." };
+      if (almostEqual(parsed.a, state.a, 1e-9) && almostEqual(parsed.b, state.b, 1e-9)) return { ok:true };
       return { ok:false, msg:"Not quite. Check the constant difference and the first term, then try again." };
     }
 
@@ -1230,14 +1203,47 @@
       if (v === null) return { ok:false, msg:"Please enter a number." };
 
       if (state.stage2Type === 'value'){
-        const correct = state.targetValue;
-        if (almostEqual(v, correct, 1e-2)) return { ok:true };
+        if (almostEqual(v, state.targetValue, 1e-2)) return { ok:true };
         return { ok:false, msg:"Not quite. Use your rule above and substitute n." };
       } else {
-        const correctN = state.targetN;
-        if (almostEqual(v, correctN, 1e-9)) return { ok:true };
+        if (almostEqual(v, state.targetN, 1e-9)) return { ok:true };
         return { ok:false, msg:"Not quite. Use your rule above and solve for n." };
       }
+    }
+
+    // ---------- Steps ----------
+    function showStepsButton(){
+      elStepsBtn.style.display = 'inline-block';
+    }
+    function setStepsContent(){
+      elStepsPre.textContent = buildSteps(state.stage);
+    }
+
+    // ---------- Anti-spam / loophole protection ----------
+    function makeSubmissionKey(){
+      // Key depends on stage + trimmed input. (So pressing submit repeatedly with same input won't count again.)
+      const raw = (elAnswerInput.value || '').trim().replace(/\s+/g,'');
+      return `${state.stage}|${raw}`;
+    }
+    function canCountThisSubmission(){
+      const rawTrim = (elAnswerInput.value || '').trim();
+      if (!rawTrim){
+        setStatus('neutral', 'Type an answer first.', state.stage === 1 ? 'Stage 1 / 2' : 'Stage 2 / 2');
+        return false;
+      }
+
+      const key = makeSubmissionKey();
+
+      // If the user is spamming Submit with the exact same input and hasn't changed it, don't count it.
+      if (key === state.lastCountedSubmissionKey && state.stageAttemptLocked){
+        setStatus('neutral', 'Change your answer before submitting again.', state.stage === 1 ? 'Stage 1 / 2' : 'Stage 2 / 2');
+        return false;
+      }
+
+      // Allow; lock it until input changes
+      state.lastCountedSubmissionKey = key;
+      state.stageAttemptLocked = true;
+      return true;
     }
 
     // ---------- Stage transitions ----------
@@ -1256,11 +1262,13 @@
       state.awaitingNext = false;
       elNextBtn.disabled = true;
 
+      // Reset anti-spam guard for the new stage/question
+      state.stageAttemptLocked = false;
+      state.lastCountedSubmissionKey = '';
+
       if (state.stage === 1){
-        // ✅ Stage 2 uses SAME problem; show the student's rule clearly
         state.stage = 2;
 
-        // show rule banner with what THEY typed, but cleaned up if possible
         const parsed = parseLinearExpression(state.lastStudentRuleRaw);
         const display = parsed ? buildExpressionString(parsed.a, parsed.b) : (state.lastStudentRuleRaw || buildExpressionString(state.a, state.b));
         elRuleExpr.textContent = display;
@@ -1280,19 +1288,15 @@
       }
     }
 
-    function showStepsButton(){
-      elStepsBtn.style.display = 'inline-block';
-    }
-    function setStepsContent(){
-      elStepsPre.textContent = buildSteps(state.stage);
-    }
-
     // ---------- Submit handler ----------
     function handleSubmit(){
       if (state.awaitingNext){
         advanceOnNext();
         return;
       }
+
+      // ✅ Core fix: do not count attempts (or score) unless this is a valid, non-empty, changed submission
+      if (!canCountThisSubmission()) return;
 
       const raw = elAnswerInput.value;
 
@@ -1310,7 +1314,6 @@
           showStepsButton();
           setStepsContent();
           elStepsBox.style.display = 'none';
-          elStepsBtn.onclick = ()=>{ showSteps(); };
           addIncorrectItem(res.msg);
         }
       } else {
@@ -1326,7 +1329,6 @@
           showStepsButton();
           setStepsContent();
           elStepsBox.style.display = 'none';
-          elStepsBtn.onclick = ()=>{ showSteps(); };
           addIncorrectItem(res.msg);
         }
       }
@@ -1335,13 +1337,17 @@
     function handleClear(){
       elAnswerInput.value = '';
       elAnswerInput.focus();
+      state.stageAttemptLocked = false;
       setStatus('neutral', 'Cleared. Type your answer and press Enter.', state.stage === 1 ? 'Stage 1 / 2' : 'Stage 2 / 2');
     }
 
+    // Steps button handler
+    elStepsBtn.addEventListener('click', ()=> showSteps());
+
     // ---------- Controls ----------
-    elSubmitBtn.addEventListener('click', handleSubmit);
-    elNextBtn.addEventListener('click', advanceOnNext);
-    elClearBtn.addEventListener('click', handleClear);
+    qs('#submitBtn').addEventListener('click', handleSubmit);
+    qs('#nextBtn').addEventListener('click', advanceOnNext);
+    qs('#clearBtn').addEventListener('click', handleClear);
 
     elSoundToggle.addEventListener('change', ()=>{ state.soundOn = elSoundToggle.checked; });
 
@@ -1371,6 +1377,8 @@
       state.streak = 0;
       state.score = 0;
       state.incorrect = [];
+      state.stageAttemptLocked = false;
+      state.lastCountedSubmissionKey = '';
       updateStatsUI();
       renderIncorrectList();
       setStatus('neutral','Session reset. New round ready.', 'Stage 1 / 2');
